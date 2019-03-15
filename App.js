@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, SafeAreaView, Text, TouchableOpacity, Dimensions, Animated, PanResponder, UIManager } from 'react-native';
-import {EggTimerTimeDisplay} from './src/EggTimerTimeDisplay';
+import { EggTimerTimeDisplay } from './src/EggTimerTimeDisplay';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -11,7 +11,7 @@ const tickSection = ticks / 5
 
 
 export default class App extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             pause: true,
@@ -27,7 +27,7 @@ export default class App extends Component {
         this.timer = null;
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this._panResponder = PanResponder.create({
             onStartShouldSetPanResponder: () => this.state.pause,
             onStartShouldSetPanResponderCapture: () => this.state.pause,
@@ -64,22 +64,22 @@ export default class App extends Component {
         })
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.timer && clearInterval(this.timer)
     }
 
-    getAngle = (pageX, pageY, circleOx, circleOy ) => {
-        let tanValue = Math.abs(pageX - circleOx)/Math.abs(pageY - circleOy)
+    getAngle = (pageX, pageY, circleOx, circleOy) => {
+        let tanValue = Math.abs(pageX - circleOx) / Math.abs(pageY - circleOy)
         let angle = Math.atan(tanValue) / (Math.PI / 180)
 
-        if(pageX > circleOx){
-            if(pageY > circleOy){
+        if (pageX > circleOx) {
+            if (pageY > circleOy) {
                 angle = 180 - angle
             }
-        }else{
-            if(pageY > circleOy){
+        } else {
+            if (pageY > circleOy) {
                 angle = 180 + angle
-            }else{
+            } else {
                 angle = 360 - angle
             }
         }
@@ -93,15 +93,15 @@ export default class App extends Component {
             pause: false
         })
         this.timer = setInterval(() => {
-            if(this.state.time < 1){
+            if (this.state.time < 1) {
                 this.overClock()
                 this.startFadeAnimation(height >= 812 ? 122 : 100)()
-            }else{
+            } else {
                 this.setState({
                     time: this.state.time - 1,
                     angle: (this.state.time - 1) / ticks / 60 * 360
                 })
-            }  
+            }
         }, 1000)
         this.startOpacityAnimation(0)()
     }
@@ -163,19 +163,21 @@ export default class App extends Component {
 
     renderTick = () => {
         return new Array(ticks).fill(null).map((_, index) => (
-            <View key={index} style={[styles.tickRadius, {transform: [{rotateZ: `${360 / ticks * index}deg`}]}]}>
+            <View
+                key={index}
+                style={[styles.tickRadius, { transform: [{ rotateZ: `${360 / ticks * index}deg` }] }]}>
                 <View style={[
                     styles.shortDot,
                     { height: index % 5 === 0 ? LONG_LENGTH : SHORT_LENGTH },
-                    { top: index % 5 === 0 ? -5 : 0}
-                ]}/>
+                    { top: index % 5 === 0 ? -5 : 0 }
+                ]} />
             </View>
         ))
     }
 
     renderTickText = () => {
         return new Array(tickSection).fill(null).map((_, index) => (
-            <View key={index} style={[styles.tickTextRadius, {transform: [{rotateZ: `${360 / tickSection * index}deg`}]}]}>
+            <View key={index} style={[styles.tickTextRadius, { transform: [{ rotateZ: `${360 / tickSection * index}deg` }] }]}>
                 <Text style={styles.tickText}>{index * 5 < 10 ? '0' + index * 5 : index * 5}</Text>
             </View>
         ))
@@ -187,9 +189,9 @@ export default class App extends Component {
                 circleOx: left + width / 2,
                 circleOy: top + height / 2
             })
-        })
+        })
     }
-    
+
     render() {
         const { pause, time, angle } = this.state;
 
@@ -198,56 +200,56 @@ export default class App extends Component {
 
         return (
             <View style={styles.container}>
-                    <SafeAreaView style={styles.safeArea}>
-                        <EggTimerTimeDisplay time={`${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`}/>
-                            <View style={styles.clockContainer}>
-                            <View style={[styles.bigCircle, styles.shadow]}>
-                                <View style={styles.tickCircle}>
+                <SafeAreaView style={styles.safeArea}>
+                    <EggTimerTimeDisplay time={`${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`} />
+                    <View style={styles.clockContainer}>
+                        <View style={[styles.bigCircle, styles.shadow]}>
+                            <View style={styles.tickCircle}>
                                 <View style={[styles.midCircle, styles.shadow]}>
                                     <Animated.View
                                         {...this._panResponder.panHandlers}
                                         ref={ref => this.clockRef = ref}
                                         onLayout={this.handleLayout}
-                                        style={[styles.midCircle, {transform: [{rotateZ: `${pause ? angle : 360 / ticks / 60 * time}deg`}]}]}>
+                                        style={[styles.midCircle, { transform: [{ rotateZ: `${pause ? angle : 360 / ticks / 60 * time}deg` }] }]}>
                                         <View style={styles.smallCircle}></View>
                                         <View
-                                            style={[styles.triangle, styles.shadow, { shadowOffset: {width: 1, height: -1} }]}/>
+                                            style={[styles.triangle, styles.shadow, { shadowOffset: { width: 1, height: -1 } }]} />
                                     </Animated.View>
                                 </View>
                                 {this.renderTick()}
-                                </View>
-                                {this.renderTickText()}
                             </View>
+                            {this.renderTickText()}
                         </View>
-                        <Animated.View
-                            style={[styles.controlContainer, {transform: [{translateY: this.state.fadeAnimation}]}]}>
-                            <Animated.View style={[styles.row, {opacity: this.state.opacityAnimation}]}>
-                                <TouchableOpacity style={styles.button} onPress={this.controlTimerRestart} disabled={!pause}>
-                                    <Text style={styles.text}>RESTART</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.button} onPress={this.controlTimerReset} disabled={!pause}>
-                                    <Text style={styles.text}>RESET</Text>
-                                </TouchableOpacity>
-                            </Animated.View>
-                            <View style={styles.row}>
-                                <TouchableOpacity style={styles.bigButton} onPress={this.controlTimerStartOrPause}>
-                                    <Text style={styles.text}>{pause ? 'RESUME' : 'PAUSE'}</Text>
-                                </TouchableOpacity>
-                            </View>
+                    </View>
+                    <Animated.View
+                        style={[styles.controlContainer, { transform: [{ translateY: this.state.fadeAnimation }] }]}>
+                        <Animated.View style={[styles.row, { opacity: this.state.opacityAnimation }]}>
+                            <TouchableOpacity style={styles.button} onPress={this.controlTimerRestart} disabled={!pause}>
+                                <Text style={styles.text}>RESTART</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button} onPress={this.controlTimerReset} disabled={!pause}>
+                                <Text style={styles.text}>RESET</Text>
+                            </TouchableOpacity>
                         </Animated.View>
-                    </SafeAreaView>
+                        <View style={styles.row}>
+                            <TouchableOpacity style={styles.bigButton} onPress={this.controlTimerStartOrPause}>
+                                <Text style={styles.text}>{pause ? 'RESUME' : 'PAUSE'}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </Animated.View>
+                </SafeAreaView>
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-  	container: {
-    	flex: 1
-  	},
-  	safeArea: {
-    	backgroundColor: '#efefef',
-    	flex: 1
+    container: {
+        flex: 1
+    },
+    safeArea: {
+        backgroundColor: '#efefef',
+        flex: 1
     },
     clockContainer: {
         height: width,
