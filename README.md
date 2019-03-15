@@ -10,4 +10,7 @@ I am a React Native Developer for about 1 year. I watched this video and thought
 
 #### Intro
 
+[一篇文章记录我的鸡蛋钟 🥚⏰](https://jielong.ink/egg-timer/)
+
 ![egg_timer_main.png](https://i.loli.net/2019/03/14/5c8a070a4f953.png)
+
